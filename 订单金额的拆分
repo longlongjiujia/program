@@ -1,0 +1,57 @@
+/**
+     * 金额
+     */
+    private static BigDecimal[] moneys = new BigDecimal[10];
+
+    /**
+     * 优惠金额
+     */
+    private static BigDecimal discountAmount = BigDecimal.ZERO;
+
+    public static void init() {
+        for (int i = 0; i < 10; i++) {
+            //返回>=0且小于1
+            double random = Math.random();
+            //返回1到100的随机数
+            random = random * 100 + 1;
+            moneys[i] = BigDecimal.valueOf(random).setScale(2, BigDecimal.ROUND_UP);
+        }
+
+        double random = Math.random() * 100 + 1;
+        discountAmount = BigDecimal.valueOf(random).setScale(2, BigDecimal.ROUND_UP);
+    }
+
+    private static BigDecimal getTotal(BigDecimal[] moneys) {
+        BigDecimal total = BigDecimal.ZERO;
+        for (BigDecimal money : moneys) {
+            total = total.add(money);
+        }
+        return total;
+    }
+
+
+    private static void calDiscountAmount() {
+        BigDecimal total = getTotal(moneys);
+
+        BigDecimal adder = BigDecimal.ZERO;
+
+        for (int i = 0; i < moneys.length - 1; i++) {
+            BigDecimal proportion = moneys[i].divide(total, 2, BigDecimal.ROUND_DOWN);
+            BigDecimal mo = discountAmount.multiply(proportion).setScale(2, BigDecimal.ROUND_UP);
+            adder = adder.add(mo);
+            System.out.println("订单金额:" + moneys[i] + ",占比:" + proportion + ",优惠金额:" + mo + ",总金额" + total);
+        }
+
+        System.out.println("累计优惠总金额:" + adder);
+
+        System.out.println("优惠金额:" + discountAmount);
+
+        BigDecimal subtract = discountAmount.subtract(adder);
+        System.out.println("最后一单优惠金额:" + subtract);
+    }
+
+
+    public static void main(String[] args) {
+        init();
+        calDiscountAmount();
+    }
